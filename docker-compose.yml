@@ -1,0 +1,41 @@
+version:  '3.7'
+services:
+#  scheduler:
+#    build: .
+#    #image: daskdev/dask
+#    hostname: dask-scheduler
+#    ports:
+#      - "8786:8786"
+#      - "8787:8787"
+#    command: ["dask-scheduler"]
+#
+#  worker:
+#    build: .
+#    #image: daskdev/dask
+#    volumes:
+#        - ${LOCAL_WORKING_DIR}:/home/jovyan/work
+#        - ${LOCAL_WORKING_DIR2}:/home/jovyan/work/mars
+#        - ${LOCAL_DATASETS}:/home/jovyan/work/datasets
+#        - ${LOCAL_MODULES}:/home/jovyan/work/modules
+#    hostname: dask-worker
+#    command: ["dask-worker", "tcp://scheduler:8786"]
+  datascience-notebook:
+      build:
+        context: .
+        #context: ./dockerfile-for-gdal
+        dockerfile: Dockerfile
+      volumes:
+        - ${LOCAL_WORKING_DIR}:/home/jovyan/work
+        - ${LOCAL_WORKING_DIR2}:/home/jovyan/work/mars
+        - ${LOCAL_DATASETS}:/home/jovyan/work/datasets
+        - ${LOCAL_MODULES}:/home/jovyan/work/modules
+        - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook
+      ports:
+        - 8888:8888
+      container_name: jupyter_notebook
+      command: "start-notebook.sh \
+        --NotebookApp.token=''"
+      environment:
+            - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
+      #extra_hosts:
+      #  - "mymachine:192.168.2.43"
